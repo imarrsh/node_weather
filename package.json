@@ -1,0 +1,10 @@
+{
+  "name": "node_weather",
+  "version": "0.1.0",
+  "main": "app.js",
+  "author": "Marshall Thompson <marshallthomp@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "weather": "node src/app.js" 
+  }
+}
