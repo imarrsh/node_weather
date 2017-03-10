@@ -1,4 +1,5 @@
 module.exports = function printCurrentReport(data){
+  // TODO: build up a better report
   const current = data.currently;
   const location = data.geolocation;
   const message = `

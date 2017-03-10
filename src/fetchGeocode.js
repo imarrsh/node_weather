@@ -20,10 +20,17 @@ function fetchGeocode(address){
 
           resp.on('end', () => {
             try {
-              const data = JSON.parse(body).results[0];
-              resolve(data);
+              // check th status property
+              const data = JSON.parse(body);
+              if(data.status === 'OK'){
+                resolve(data.results[0]);
+              } else {
+                const message = 'No results matched location.';
+                const resultsError = new Error(message);
+                reject(resultsError);
+              }
             } catch(err){
-              reject(err.message + 'poo poo');
+              reject(err.message);
             }
           });
 
