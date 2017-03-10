@@ -2,18 +2,12 @@ const https = require('https');
 const http = require('http');
 const api = require('./api.json').darkSky;
 
-// function printError(err){
-//   console.error(err.message);
-// }
-
 function fetchWeather(location){
-  // var position = lat + ',' + long;
-  // console.log('coords:', coords);
+
   const gps = location.geometry.location;
   const position = `${gps.lat},${gps.lng}`;
   const options = {
     hostname: 'api.darksky.net',
-    // port: 443,
     path: '/forecast/' + api.key + '/' + position,
     method: 'GET'
   };
@@ -23,13 +17,12 @@ function fetchWeather(location){
     try {
       var req = https.request(options, (res) => {
         const status = res.statusCode;
-        // console.log('headers:', res.headers);
+
         if (res.statusCode === 200){
           let body = "";
 
           // listen for data event
           res.on('data', (d) => {
-            // process.stdout.write(d);
             // convert from Buffer to string
             body += d.toString();
           })
@@ -48,6 +41,7 @@ function fetchWeather(location){
             }
           });
         } else {
+          // handle 404s
           const message = `There was a problem getting the weather. (${http.STATUS_CODES[status]})`;
           const statusCodeError = new Error(message);
           reject(statusCodeError);

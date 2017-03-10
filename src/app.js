@@ -1,6 +1,6 @@
 const fetchGeocode = require('./fetchGeocode').fetchGeocode;
 const fetchWeather = require('./fetchWeather').fetchWeather;
-const printCurrentReport = require('./printReport');
+const reports = require('./printReport');
 
 function gimmeWeather(address){
 
@@ -12,10 +12,10 @@ function gimmeWeather(address){
       return fetchWeather(loacationData);
     })
     .then(function(data){
-      printCurrentReport(data);
+      reports.printCurrentReport(data);
     })
     .catch(function(err) {
-      console.error(err.message);
+      reports.printErrors(err.message);
     });
 
 }
