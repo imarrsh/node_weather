@@ -1,3 +1,5 @@
+"use strict";
+
 const fetchGeocode = require('./fetchGeocode').fetchGeocode;
 const fetchWeather = require('./fetchWeather').fetchWeather;
 const reports = require('./printReport');

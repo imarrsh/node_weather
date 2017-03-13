@@ -25,7 +25,7 @@ function fetchWeather(location){
           res.on('data', (d) => {
             // convert from Buffer to string
             body += d.toString();
-          })
+          });
           // when the data has fully downloaded,
           // parse into object and console.dir it
           res.on('end', () => {
@@ -51,7 +51,7 @@ function fetchWeather(location){
 
       req.on('error', (err) => {
         reject(err.message);
-      })
+      });
 
       req.end();
 
@@ -68,4 +68,4 @@ function fetchWeather(location){
 
 module.exports = {
   fetchWeather: fetchWeather
-}
+};

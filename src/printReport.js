@@ -8,13 +8,16 @@ function printCurrentReport(data){
     alerts = printAlerts(data.alerts);
   }
 
+  const hourlyReport = printHourlyReport(data);
+
   const location = data.geolocation;
   message = `
     ${Date(current.time)}
 
     Currently, in ${location.formatted_address}:
     ${current.summary}, ${current.temperature}°F - Feels like ${current.apparentTemperature}°F 
-    ${current.precipProbability}% chance of rain
+    ${percentage(current.precipProbability)} chance of rain
+    ${hourlyReport}
     ${alerts}
   
    ${poweredBy()}
@@ -31,6 +34,18 @@ function printMinutelyReport(data){
 function printHourlyReport(data){
   const hours = data.hourly;
   const summary = hours.summary;
+
+  const hourlyReport = hours.data.map(hour => {
+      let t = new Date(hour.time * 1000);
+      return `
+    ${t.getHours()}:${('0' + t.getMinutes()).slice(-2)}
+    ${summary}${hour.precipProbability ? 
+        ', ' + percentage(hour.precipProbability) + ' chance of ' + hour.precipType : 
+        '' }
+      `;
+  }).join('');
+
+  return hourlyReport;
 }
 
 function printDailyReport(data){
@@ -46,8 +61,12 @@ function printAlerts(alerts){
     ${alert.title}
     ${Date(alert.time)} - ${Date(alert.expires)}
     ${alert.description}
-    `
+    `;
   }).join('\n');
+}
+
+function percentage(float){
+  return Math.round(float * 100) + '%';
 }
 
 function printErrors(error){

@@ -3,7 +3,7 @@ const http = require('http');
 const api = require('./api.json').googleGeo;
 
 function fetchGeocode(address){
-  const url = 'https://maps.googleapis.com/maps/api/geocode/json?address='
+  const url = 'https://maps.googleapis.com/maps/api/geocode/json?address=';
   const key = '&key=' + api.key;
   let message, data, resultsError, statusCodeError;
   
@@ -61,4 +61,4 @@ function fetchGeocode(address){
 
 module.exports = {
   fetchGeocode: fetchGeocode
-}
+};
