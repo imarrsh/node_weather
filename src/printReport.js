@@ -12,7 +12,7 @@ function printCurrentReport(data){
 
   const location = data.geolocation;
   message = `
-    ${Date(current.time)}
+    ${formatDate(current.time)}
 
     Currently, in ${location.formatted_address}:
     ${current.summary}, ${current.temperature}°F - Feels like ${current.apparentTemperature}°F 
@@ -36,7 +36,7 @@ function printHourlyReport(data){
   const summary = hours.summary;
 
   const hourlyReport = hours.data.map(hour => {
-      let t = new Date(hour.time * 1000);
+      let t = formatDate(hour.time);
       return `
     ${t.getHours()}:${('0' + t.getMinutes()).slice(-2)}
     ${summary}${hour.precipProbability ? 
@@ -55,11 +55,13 @@ function printDailyReport(data){
 
 function printAlerts(alerts){
   return alerts.map(alert => {
+    const starts = formatDate(alert.time);
+    const expires = formatDate(alert.expires);
     return `
     ALERTS
     
     ${alert.title}
-    ${Date(alert.time)} - ${Date(alert.expires)}
+    ${starts} - ${expires}
     ${alert.description}
     `;
   }).join('\n');
@@ -67,6 +69,13 @@ function printAlerts(alerts){
 
 function percentage(float){
   return Math.round(float * 100) + '%';
+}
+
+// Darksky automatically converts to seconds for us -
+// this just converts the timestamp back to ms and 
+// calls new date on it
+function formatDate(timestamp){
+  return new Date(timestamp * 1000);
 }
 
 function printErrors(error){
