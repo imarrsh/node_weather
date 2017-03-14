@@ -18,10 +18,11 @@ function printCurrentReport(data){
     ${current.summary}, ${current.temperature}°F - Feels like ${current.apparentTemperature}°F 
     ${percentage(current.precipProbability)} chance of rain
     ${hourlyReport}
-    ${alerts}
+    
   
    ${poweredBy()}
   `;
+  //${alerts}
   
   console.log(message);
 }
@@ -35,17 +36,24 @@ function printHourlyReport(data){
   const hours = data.hourly;
   const summary = hours.summary;
 
-  const hourlyReport = hours.data.map(hour => {
-      let t = formatDate(hour.time);
+  const hourlyReport = hours.data.map((hour, i) => {
+    let t = formatDate(hour.time);
+    if (i <= 11){
       return `
     ${t.getHours()}:${('0' + t.getMinutes()).slice(-2)}
-    ${summary}${hour.precipProbability ? 
-        ', ' + percentage(hour.precipProbability) + ' chance of ' + hour.precipType : 
+    ${summary}
+    ${hour.precipProbability ? 
+        percentage(hour.precipProbability) + ' chance of ' + hour.precipType : 
         '' }
+    ${hour.windSpeed}mph ${calculateWindDirection(hour.windBearing)}
       `;
+    }
   }).join('');
 
-  return hourlyReport;
+  return `
+    HOURLY:
+    ${hourlyReport}
+    `;
 }
 
 function printDailyReport(data){
@@ -53,14 +61,38 @@ function printDailyReport(data){
   const summary = days.summary;
 }
 
+function calculateWindDirection(bearing){
+  const maxDeg = 360; // full circle
+  const cardinals = ["N","NNE", "NE", "ENE", 
+    "E", "ESE", "SE", "SSE", "S", "SSW", 
+    "SW", "WSW", "W", "WNW", "NW", "NNW"];
+  // how much of the pie consitutes a region?
+  const region = maxDeg / cardinals.length; // 22.5°
+  // add half a region amount to the bearing
+  let adjustedBearing = bearing + (region / 2);
+  // if greater than max, then subtract max
+  if (adjustedBearing >= maxDeg){
+    adjustedBearing = adjustedBearing - maxDeg;
+  }
+
+  return cardinals[Math.floor((adjustedBearing / region))];
+
+  // return `
+  //   Direction: ${cardinals[windDirection]}, 
+  //   Index: ${(Math.floor(bearing / region))} 
+  //   Orginal: ${bearing}° 
+  //   windDirection: ${windDirection}`;
+}
+
 function printAlerts(alerts){
+  // const 
   return alerts.map(alert => {
     const starts = formatDate(alert.time);
     const expires = formatDate(alert.expires);
     return `
     ALERTS
     
-    ${alert.title}
+    ${alert.title} - ${alert.regions.join(', ')}
     ${starts} - ${expires}
     ${alert.description}
     `;
@@ -89,5 +121,6 @@ function poweredBy(){
 
 module.exports = {
   printCurrentReport: printCurrentReport,
-  printErrors: printErrors
-}
+  printErrors: printErrors,
+  calculateWindDirection: calculateWindDirection
+};
