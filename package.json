@@ -5,6 +5,11 @@
   "author": "Marshall Thompson <marshallthomp@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "weather": "node src/app.js" 
+    "weather": "node src/app.js",
+    "test": "mocha"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0"
   }
 }
