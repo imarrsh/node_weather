@@ -9,6 +9,7 @@ function printCurrentReport(data){
   }
 
   const hourlyReport = printHourlyReport(data);
+  const dailyReport = printDailyReport(data);
 
   const location = data.geolocation;
   message = `
@@ -18,13 +19,13 @@ function printCurrentReport(data){
     ${current.summary}, ${current.temperature}°F - Feels like ${current.apparentTemperature}°F 
     ${percentage(current.precipProbability)} chance of rain
     ${hourlyReport}
+    ${dailyReport}
+    ${alerts}
     
-  
    ${poweredBy()}
   `;
-  //${alerts}
   
-  console.log(message);
+  console.log(message); 
 }
 
 function printMinutelyReport(data){
@@ -41,11 +42,10 @@ function printHourlyReport(data){
     if (i <= 11){
       return `
     ${t.getHours()}:${('0' + t.getMinutes()).slice(-2)}
-    ${summary}
-    ${hour.precipProbability ? 
-        percentage(hour.precipProbability) + ' chance of ' + hour.precipType : 
+    ${summary}${hour.precipProbability ? 
+        '\n' + percentage(hour.precipProbability) + ' chance of ' + hour.precipType : 
         '' }
-    ${hour.windSpeed}mph ${calculateWindDirection(hour.windBearing)}
+    Winds ${Math.floor(hour.windSpeed)}mph, ${calculateWindDirection(hour.windBearing)}
       `;
     }
   }).join('');
@@ -53,19 +53,36 @@ function printHourlyReport(data){
   return `
     HOURLY:
     ${hourlyReport}
+    ...
     `;
 }
 
 function printDailyReport(data){
   const days = data.daily;
   const summary = days.summary;
+
+  const week = days.data.map(day => {
+    return `
+    ${formatDay(day.time)}
+    ${day.summary}
+    Sunrise ${formatTime(day.sunriseTime)}, Sunset ${formatTime(day.sunsetTime)}
+    `;
+  }).join('');
+
+  return `
+    REST OF THE WEEK:
+    ${summary}
+    ${week}
+  `;
 }
 
 function calculateWindDirection(bearing){
   const maxDeg = 360; // full circle
-  const cardinals = ["N","NNE", "NE", "ENE", 
-    "E", "ESE", "SE", "SSE", "S", "SSW", 
-    "SW", "WSW", "W", "WNW", "NW", "NNW"];
+  const cardinals = [
+    "N","N-NE", "NE", "E-NE", "E",
+    "E-SE", "SE", "S-SE", "S", "S-SW", 
+    "SW", "W-SW", "W", "W-NW", "NW", "N-NW"
+  ];
   // how much of the pie consitutes a region?
   const region = maxDeg / cardinals.length; // 22.5°
   // add half a region amount to the bearing
@@ -74,29 +91,26 @@ function calculateWindDirection(bearing){
   if (adjustedBearing >= maxDeg){
     adjustedBearing = adjustedBearing - maxDeg;
   }
-
+  // return the region we're blowing at
   return cardinals[Math.floor((adjustedBearing / region))];
 
-  // return `
-  //   Direction: ${cardinals[windDirection]}, 
-  //   Index: ${(Math.floor(bearing / region))} 
-  //   Orginal: ${bearing}° 
-  //   windDirection: ${windDirection}`;
 }
 
 function printAlerts(alerts){
   // const 
-  return alerts.map(alert => {
+  const alertList =  alerts.map(alert => {
     const starts = formatDate(alert.time);
     const expires = formatDate(alert.expires);
     return `
-    ALERTS
-    
     ${alert.title} - ${alert.regions.join(', ')}
     ${starts} - ${expires}
     ${alert.description}
-    `;
+  `;
   }).join('\n');
+
+  return `ALERTS
+  ${alertList}
+  `;
 }
 
 function percentage(float){
@@ -108,6 +122,25 @@ function percentage(float){
 // calls new date on it
 function formatDate(timestamp){
   return new Date(timestamp * 1000);
+}
+
+function formatTime(timestamp){
+  const d = formatDate(timestamp);
+  const hr = d.getHours();
+  const min = d.getMinutes();
+  return `${hr}:${min}`;
+}
+
+function formatDay(timestamp){
+  const d = formatDate(timestamp);
+  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const mons = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.' ];
+  const day = days[d.getDay()]; // day of week
+  const date = d.getDate(); // day of month
+  const mon = mons[d.getMonth()];
+  const yr = d.getFullYear();
+
+  return `${day}, ${mon} ${date}, ${yr}`;
 }
 
 function printErrors(error){
