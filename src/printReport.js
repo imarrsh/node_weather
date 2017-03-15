@@ -134,7 +134,7 @@ function formatTime(timestamp){
 function formatDay(timestamp){
   const d = formatDate(timestamp);
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  const mons = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.' ];
+  const mons = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May','Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.' ];
   const day = days[d.getDay()]; // day of week
   const date = d.getDate(); // day of month
   const mon = mons[d.getMonth()];
