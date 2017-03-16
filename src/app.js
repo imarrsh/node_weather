@@ -3,6 +3,7 @@
 const fetchGeocode = require('./fetchGeocode').fetchGeocode;
 const fetchWeather = require('./fetchWeather').fetchWeather;
 const reports = require('./printReport');
+const printErrors = require('./modules/printErrors');
 
 function gimmeWeather(address){
 
@@ -17,7 +18,7 @@ function gimmeWeather(address){
       reports.printCurrentReport(data);
     })
     .catch(function(err) {
-      reports.printErrors(err.message);
+      printErrors(err.message);
     });
 
 }
