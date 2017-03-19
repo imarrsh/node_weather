@@ -1,5 +1,6 @@
 const https = require('https');
 const http = require('http');
+const zlib = require('zlib');
 const api = require('./api.json').darkSky;
 
 function fetchWeather(location){
@@ -9,28 +10,36 @@ function fetchWeather(location){
   const options = {
     hostname: 'api.darksky.net',
     path: '/forecast/' + api.key + '/' + position,
-    method: 'GET'
+    method: 'GET',
+    headers: {
+      "Accept-Encoding": "gzip"
+    },
+    gzip: true
   };
 
   return new Promise(function(resolve, reject){
 
     try {
-      var req = https.request(options, (res) => {
+      const req = https.request(options, (res) => {
         const status = res.statusCode;
 
         if (res.statusCode === 200){
-          let body = "";
+          let body = '';
+          // pipe response to gunzip!
+          const gunzip = zlib.createGunzip();
+          res.pipe(gunzip);
 
           // listen for data event
-          res.on('data', (d) => {
+          gunzip.on('data', (d) => {
             // convert from Buffer to string
             body += d.toString();
           });
           // when the data has fully downloaded,
           // parse into object and console.dir it
-          res.on('end', () => {
+          gunzip.on('end', () => {
             try {
               // try to parse body
+              // res.pipe(zlib.createUnzip()).pipe(body);
               const report = JSON.parse(body);
               //attach location info to report
               report.geolocation = location;
@@ -40,6 +49,7 @@ function fetchWeather(location){
               reject(err.message);
             }
           });
+          
         } else {
           // handle 404s
           const message = `There was a problem getting the weather. (${http.STATUS_CODES[status]})`;

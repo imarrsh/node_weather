@@ -11,7 +11,7 @@ module.exports = function hourlyReport(data){
     if (i <= 11){
       return `
     ${t.getHours()}:${('0' + t.getMinutes()).slice(-2)} ${hour.precipProbability ? 
-        '\n' + percentage(hour.precipProbability) + ' chance of ' + hour.precipType : 
+        '\n    ' + percentage(hour.precipProbability) + ' chance of ' + hour.precipType : 
         '' }
     Winds ${Math.floor(hour.windSpeed)}mph, ${windDirection(hour.windBearing)}
       `;
