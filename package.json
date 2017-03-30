@@ -1,15 +1,20 @@
 {
   "name": "weather",
   "version": "0.1.0",
-  "main": "app.js",
+  "main": "server.js",
   "author": "Marshall Thompson <marshallthomp@gmail.com>",
   "license": "MIT",
   "scripts": {
     "weather": "node src/app.js",
-    "test": "mocha"
+    "test": "mocha",
+    "start": "node src/server.js"
   },
   "devDependencies": {
     "chai": "^3.5.0",
     "mocha": "^3.2.0"
+  },
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "express": "^4.15.2"
   }
 }

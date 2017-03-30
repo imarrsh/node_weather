@@ -7,23 +7,31 @@ const printErrors = require('./modules/printErrors');
 
 function gimmeWeather(address){
 
-  fetchGeocode(address)
-    .then(function(data){
-      return data;
-    })
-    .then(function(loacationData){
-      return fetchWeather(loacationData);
-    })
-    .then(function(data){
-      reports.printCurrentReport(data);
-    })
-    .catch(function(err) {
-      printErrors(err.message);
-    });
-
+  return new Promise((resolve, reject) => {
+    
+    fetchGeocode(address)
+      .then(function(data){
+        return data;
+      })
+      .then(function(loacationData){
+        return fetchWeather(loacationData);
+      })
+      .then(function(data){
+        // reports.printCurrentReport(data);
+        resolve(data);
+      })
+      .catch(function(err) {
+        // printErrors(err.message);
+        reject(err.message);
+      });
+  });
 }
 
+module.exports = {
+  gimmeWeather: gimmeWeather
+};
+
 // get the cli args:
-const address = process.argv.slice(2).join('+');
-// start the hunt with those args!
-gimmeWeather(address);
+// const address = process.argv.slice(2).join('+');
+// // start the hunt with those args!
+// gimmeWeather(address);

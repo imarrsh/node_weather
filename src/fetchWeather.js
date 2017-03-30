@@ -23,7 +23,7 @@ function fetchWeather(location){
       const req = https.request(options, (res) => {
         const status = res.statusCode;
 
-        if (res.statusCode === 200){
+        if (status === 200){
           let body = '';
           // pipe response to gunzip!
           const gunzip = zlib.createGunzip();

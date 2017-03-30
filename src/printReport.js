@@ -3,6 +3,7 @@ const dailyReport = require('./modules/reports/daily');
 const weatherAlerts = require('./modules/reports/alerts');
 const percentage = require('./modules/reports/percentage');
 const formatDate = require('./modules/reports/time').formatDate;
+const formatDay = require('./modules/reports/time').formatDay;
 
 function printCurrentReport(data){
   const current = data.currently;
