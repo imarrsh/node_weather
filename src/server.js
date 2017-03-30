@@ -23,6 +23,11 @@ var myLogger = function (req, res, next) {
 };
 router.use(myLogger); 
 
+// initial route
+router.get('/', function (req, res) {
+  res.json({ message: 'welcome!' });
+});
+
 // test route for the app
 router.get('/hello', function (req, res) {
   res.json({ message: 'Hello World!' });
